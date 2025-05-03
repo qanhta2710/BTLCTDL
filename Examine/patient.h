@@ -9,14 +9,14 @@ typedef enum { WAITING, EXAMINING, FINISHED } Status;
 // Cau truc cho benh nhan
 typedef struct Patient {
     char id[10]; // Ma benh nhan
-    char name[50]; // Ten benh nhan
-    int age;      // Tuoi benh nhan
-    Status status; // Trang thai benh nhan
+    char name[50]; // Ho ten
+    int year;      // Nam sinh
+    Status status; // Trang thai
     time_t arrivalTime; // Thoi gian den kham benh
     int priority; // Muc do uu tien
 } Patient;
 
-// Cau truc kieu Node cho benh nhan
+// Cau truc kieu Node cho benh nhan (danh sach lien ket don)
 typedef struct PatientNode {
     Patient *patient;
     struct PatientNode *next;
@@ -26,5 +26,6 @@ typedef struct PatientNode {
 typedef struct PatientList {
     PatientNode *head;
 } PatientList;
+
 
 #endif
