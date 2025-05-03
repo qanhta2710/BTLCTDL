@@ -13,6 +13,7 @@ typedef struct Patient {
     int age;      // Tuoi benh nhan
     Status status; // Trang thai benh nhan
     time_t arrivalTime; // Thoi gian den kham benh
+    int priority; // Muc do uu tien
 } Patient;
 
 // Cau truc kieu Node cho benh nhan
