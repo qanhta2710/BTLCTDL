@@ -20,7 +20,7 @@ void formatArrivalTime(time_t rawTime, char* buffer, int bufSize) {
 }
 
 // Hàm sắp xếp bệnh nhân theo ưu tiên từ cao xuống thấp bằng cách duyệt danh sách liên kết
-void sortPatientsByPriority(PatientList* list) {
+void listPatientsByPriority(PatientList* list) {
     if (list == NULL || list->head == NULL) return;
 
     printf("Sắp xếp bệnh nhân theo thứ tự ưu tiên\n");
