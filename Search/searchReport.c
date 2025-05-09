@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <time.h>
 #include "patient.h"
 
@@ -23,7 +24,7 @@ void formatArrivalTime(time_t rawTime, char* buffer, int bufSize) {
 void sortPatientsByPriority(PatientList* list) {
     if (list == NULL || list->head == NULL) return;
 
-    printf("Sắp xếp bệnh nhân theo thứ tự ưu tiên\n");
+    printf("Sorting patients by priority order\n");
 
     PatientNode *i, *j;
     Patient *tempPatient;
@@ -41,7 +42,7 @@ void sortPatientsByPriority(PatientList* list) {
     printf("\n+----------+----------------------+------+" 
            "------------+-------------------+------------+\n");
     printf("| %-8s | %-20s | %-4s | %-10s | %-17s | %-10s |\n",
-           "ID", "Tên", "Năm sinh", "Trạng thái", "Thời gian đến", "Ưu tiên");
+           "ID", "Name", "Birth Year", "Status", "Arrival Time", "Priority");
     printf("+----------+----------------------+------+" 
            "------------+-------------------+------------+\n");
 
@@ -73,6 +74,20 @@ Patient* searchByName(PatientList* list, char* name) {
     PatientNode* current = list->head;
     while (current != NULL) {
         if (strcmp(current->patient->name, name) == 0) {
+            return current->patient; // Trả về con trỏ tới bệnh nhân đầu tiên tìm thấy
+        }
+        current = current->next;
+    }
+    return NULL; // Không tìm thấy
+}
+
+// Tìm kiếm bệnh nhân theo ID (tìm kiếm tuần tự trên danh sách liên kết)
+Patient* searchByID(PatientList* list, char* id) {
+    if (list == NULL || list->head == NULL || id == NULL) return NULL;
+
+    PatientNode* current = list->head;
+    while (current != NULL) {
+        if (strcmp(current->patient->id, id) == 0) {
             return current->patient; // Trả về con trỏ tới bệnh nhân đầu tiên tìm thấy
         }
         current = current->next;

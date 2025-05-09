@@ -22,4 +22,7 @@ void listPatientsByPriority(PatientList* list, int priority);
 // Tìm kiếm bệnh nhân theo tên (sử dụng tìm kiếm tuần tự)
 Patient* searchByName(PatientList* list, char* name);
 
+// Tim kiem benh nhan theo ID (su dung tim kiem tuan tu)
+Patient* searchByID(PatientList *list, char *id); 
+
 #endif
