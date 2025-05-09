@@ -27,5 +27,9 @@ typedef struct PatientList {
     PatientNode *head;
 } PatientList;
 
+Patient *newPatient(char *id, char *name, int year, time_t arrivalTime, int priority);
+PatientList *createPatientList();
+void updatePatientStatus(Patient *Patient, int status);
+void freePatientList(PatientList *list);
 
 #endif
