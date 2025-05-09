@@ -5,68 +5,52 @@
 #include <time.h>
 #include "patient.h"
 
-// Chuyển enum trạng thái sang chuỗi
-const char* getStatusString(Status status) {
-    switch (status) {
-        case WAITING: return "WAITING";
-        case EXAMINING: return "EXAMINING";
-        case FINISHED: return "FINISHED";
-        default: return "UNKNOWN";
+// Liệt kê toàn bộ bệnh nhân
+void listPatients(PatientList* list) {
+    if (list == NULL || list->head == NULL) {
+        printf("Danh sách bệnh nhân trống.\n");
+        return;
     }
-}
-
-// Format thời gian đến thành chuỗi
-void formatArrivalTime(time_t rawTime, char* buffer, int bufSize) {
-    struct tm* timeinfo = localtime(&rawTime);
-    strftime(buffer, bufSize, "%Y-%m-%d %H:%M", timeinfo);
-}
-
-// Hàm sắp xếp bệnh nhân theo ưu tiên từ cao xuống thấp bằng cách duyệt danh sách liên kết
-void sortPatientsByPriority(PatientList* list) {
-    if (list == NULL || list->head == NULL) return;
-
-    printf("Sorting patients by priority order\n");
-
-    PatientNode *i, *j;
-    Patient *tempPatient;
-    for (i = list->head; i != NULL; i = i->next) {
-        for (j = i->next; j != NULL; j = j->next) {
-            if (i->patient->priority < j->patient->priority) {
-                tempPatient = i->patient;
-                i->patient = j->patient;
-                j->patient = tempPatient;
-            }
-        }
-    }
-
-    // In bảng kết quả
-    printf("\n+----------+----------------------+------+" 
-           "------------+-------------------+------------+\n");
-    printf("| %-8s | %-20s | %-4s | %-10s | %-17s | %-10s |\n",
-           "ID", "Name", "Birth Year", "Status", "Arrival Time", "Priority");
-    printf("+----------+----------------------+------+" 
-           "------------+-------------------+------------+\n");
 
     PatientNode* current = list->head;
     while (current != NULL) {
-        char timeStr[20];
-        formatArrivalTime(current->patient->arrivalTime, timeStr, sizeof(timeStr));
-        printf("| %-8s | %-20s | %-4d | %-10s | %-17s | %-10d |\n",
+        printf("ID: %s | Tên: %s | Tuổi: %d | Ưu tiên: %d\n",
                current->patient->id,
                current->patient->name,
                current->patient->year,
-               getStatusString(current->patient->status),
-               timeStr,
                current->patient->priority);
         current = current->next;
-        if (current != NULL) {
-            printf("+----------+----------------------+------+" 
-                   "------------+-------------------+------------+\n");
+    }
+}
+
+void listPatientsByPriority(PatientList* list) {
+    if (list == NULL || list->head == NULL) {
+        printf("The patient list is empty.\n");
+        return;
+    }
+
+    int maxPriority = 3; // Or the highest priority level used in the system
+    for (int priority = 0; priority <= maxPriority; priority++) {
+        int found = 0;
+        PatientNode* current = list->head;
+        while (current != NULL) {
+            if (current->patient->priority == priority) {
+                printf("ID: %s | Name: %s | Age: %d | Priority: %d\n",
+                       current->patient->id,
+                       current->patient->name,
+                       current->patient->year,
+                       current->patient->priority);
+                found = 1;
+            }
+            current = current->next;
+        }
+
+        if (found) {
+            printf("--- End of priority level %d ---\n", priority);
         }
     }
-    printf("+----------+----------------------+------+" 
-           "------------+-------------------+------------+\n");
 }
+
 
 // Tìm kiếm bệnh nhân theo tên (tìm kiếm tuần tự)
 Patient* searchByName(PatientList* list, char* name) {
