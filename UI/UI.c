@@ -16,6 +16,10 @@ void displayMenu() {
     printf("Enter your choice: ");
 }
 
+void clearScreen() {
+    printf("\033[H\033[J");
+}
+
 void processUserInput(PatientList *list, PriorityQueue *pq) {
     int choice;
     do {

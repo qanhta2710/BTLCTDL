@@ -6,5 +6,6 @@
 
 void displayMenu();
 void processUserInput(PatientList *list, PriorityQueue *pq);
+void clearScreen();
 
 #endif
