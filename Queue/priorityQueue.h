@@ -4,8 +4,8 @@
 #include "Examine/patient.h"
 typedef struct PriorityQueue {
     Patient **patient;
-    int size; // kich thuoc hien tai
-    int capacity; // kich thuoc toi da
+    int size; // Kích thước hiện tại 
+    int capacity; // Kích thước tối đa
 } PriorityQueue;
 
 #endif
