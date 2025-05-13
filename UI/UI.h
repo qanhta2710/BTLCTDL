@@ -7,5 +7,7 @@
 void displayMenu();
 void processUserInput(PatientList *list, PriorityQueue *pq);
 void clearScreen();
+const char *getCaseTypeName(CaseType caseType);
+const char *getStatusName(Status status);
 
 #endif

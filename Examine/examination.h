@@ -1,10 +1,9 @@
 #ifndef EXAMINATION_H
 #define EXAMINATION_H
 
-#include <Examine/patient.h>
+#include "patient.h"
 
-void startExamination(Patient *patient);
-void finishExamination(Patient *patient);
+void startExamination(Patient *patient); // Thực hiện chuyển trạng thái từ WAITING sang EXAMINING và cập nhật thời gian bắt đầu khám
+void finishExamination(Patient *patient); // Thực hiện chuyển trạng thái từ EXAMINING sang FINISHED và cập nhật thời gian kết thúc khám
 
-// Có ý tưởng gì thì bổ sung thêm đây chỉ là các hàm cơ bản
 #endif
