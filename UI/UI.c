@@ -56,8 +56,6 @@ void processUserInput(PatientList *list, PriorityQueue *pq) {
     int choice, caseTypeChoice;
     char id[10], name[255];
     int year, caseType;
-    PatientList *myPatientList = createPatientList();
-    PriorityQueue *myQueue = createPriorityQueue();
     
     do {
         displayMenu();
@@ -99,13 +97,13 @@ void processUserInput(PatientList *list, PriorityQueue *pq) {
 
             Patient *myPatient = newPatient(id, name, year, caseType);
             if (myPatient != NULL) {
-                if (searchPatientByID(myPatientList, id) != NULL) {
+                if (searchPatientByID(list, id) != NULL) {
                     printf("Patient ID already exists\n");
                     free(myPatient);
                     break;
                 } else {
-                    addPatient(myPatientList, myPatient);
-                    enqueue(myQueue, myPatient);
+                    addPatient(list, myPatient);
+                    enqueue(pq, myPatient);
                     printf("Patient added successfully\n");    
                 }
             } else {
@@ -117,10 +115,10 @@ void processUserInput(PatientList *list, PriorityQueue *pq) {
         case 2:
             clearScreen();
             printf("=== Call Next Patient ===\n");
-            if (isEmpty(myQueue)) {
+            if (isEmpty(pq)) {
                 printf("Queue is empty\n");
             } else {
-                Patient *nextPatient = dequeue(myQueue);
+                Patient *nextPatient = dequeue(pq);
                 startExamination(nextPatient);
                 printf("Calling ID: %s\n", nextPatient->id);
                 printf("Patient Name: %s\n", nextPatient->name);
@@ -134,7 +132,7 @@ void processUserInput(PatientList *list, PriorityQueue *pq) {
             printf("Enter patient ID: ");
             fgets(id, sizeof(id), stdin);
             id[strcspn(id, "\n")] = 0;
-            Patient *finishedPatient = searchByID(myPatientList, id); // TODO: Chờ làm xong hàm search
+            Patient *finishedPatient = searchByID(list, id); // TODO: Chờ làm xong hàm search
             if (finishedPatient == NULL) {
                 printf("Patient not found\n");
             } else if (finishedPatient->status != EXAMINING) {
@@ -152,7 +150,7 @@ void processUserInput(PatientList *list, PriorityQueue *pq) {
             printf("Enter patient ID: ");
             fgets(id, sizeof(id), stdin);
             id[strcspn(id, "\n")] = 0;
-            Patient *targetPatient = searchByID(myPatientList, id); // TODO: Chờ hàm searchByID
+            Patient *targetPatient = searchByID(list, id); // TODO: Chờ hàm searchByID
             if (targetPatient == NULL) {
                 printf("Patient not found\n");
             } else {
@@ -185,42 +183,40 @@ void processUserInput(PatientList *list, PriorityQueue *pq) {
             fgets(name, sizeof(name), stdin);
             name[strcspn(name, "\n")] = 0;
 
-            searchByName(myPatientList, name); // TODO: Chờ hoàn thành hàm searchByName
+            searchByName(list, name); // TODO: Chờ hoàn thành hàm searchByName
             printf("Press any key to continue...\n");
             getchar();
             break;
         case 6:
             clearScreen();
             printf("=== List Patients by ID ===\n");
-            listPatientsByID(myPatientList); // TODO
+            listPatientsByID(list); // TODO
             printf("Press any key to continue...\n");
             getchar();
             break;
         case 7: 
             clearscreen();
             printf("=== List Patients by Priority ===\n");
-            listPatientsByPriority(myPatientList); // TODO
+            listPatientsByPriority(list); // TODO
             printf("Press any key to continue...\n");
             getchar();
             break;
         case 8:
             clearScreen();
             printf("=== List Patients by Status ===\n");
-            listPatientsByStatus(myPatientList); // TODO
+            listPatientsByStatus(list); // TODO
             printf("Press any key to continue...\n");
             getchar();
             break;
         case 9:
             clearScreen();
-            showQueue(myQueue); // TODO
+            showQueue(pq); // TODO
             printf("Press any key to continue...\n");
             getchar();
             break;
         case 10:
             clearScreen();
             printf("Exiting...\n");
-            freePatientList(myPatientList);
-            freePriorityQueue(myQueue);
             break;
         default:
             printf("Invalid Option");
