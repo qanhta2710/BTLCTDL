@@ -1,7 +1,7 @@
 #ifndef SEARCH_REPORT_H
 #define SEARCH_REPORT_H
 
-#include "Examine\patient.h"  // Gồm định nghĩa struct Patient, Status, PatientNode
+#include "patient.h"  // Gồm định nghĩa struct Patient, Status, PatientNode
 
 
 // Liệt kê bệnh nhân theo mức độ ưu tiên (0: thấp nhất)

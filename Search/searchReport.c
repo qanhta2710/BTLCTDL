@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-#include "Examine/patient.h"
+#include "patient.h"
 
 // Helper: convert CaseType to string
 const char* caseTypeToString(CaseType type) {
