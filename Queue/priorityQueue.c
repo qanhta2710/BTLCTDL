@@ -1,163 +1,97 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <time.h>
-#include <unistd.h>
+#include "priorityqueue.h"
 
-#define MAX_PATIENTS 100
+// Ham noi bo: so sanh hai benh nhan theo uu tien (caseType)
+// Uu tien: caseType nho hon -> uu tien cao hon
+// Neu caseType bang nhau -> benh nhan den som hon uu tien hon
+static int compare(Patient* a, Patient* b) {
+    if (a->caseType != b->caseType)
+        return a->caseType - b->caseType;
+    return (int)difftime(a->arrivalTime, b->arrivalTime);
+}
 
-typedef enum {
-    NOT_EXAMINED,
-    EXAMINING,
-    EXAMINED
-} Status;
+// Ham noi bo: doi cho vi tri trong heap
+static void swap(Patient** a, Patient** b) {
+    Patient* tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
 
-typedef enum {
-    EMERGENCY = 1,
-    NORMAL = 2,
-    ROUTINE = 3,
-    CONSULTATION = 4
-} CaseType;
+// Ham noi bo: dieu chinh len tren khi them phan tu
+static void heapifyUp(PriorityQueue* pq, int idx) {
+    while (idx > 0) {
+        int parent = (idx - 1) / 2;
+        if (compare(pq->data[idx], pq->data[parent]) < 0) {
+            swap(&pq->data[idx], &pq->data[parent]);
+            idx = parent;
+        } else break;
+    }
+}
 
-typedef struct {
-    char id[10];
-    char name[50];
-    int year;
-    Status status;
-    time_t arrivalTime;
-    CaseType caseType;
-    time_t examiningStartTime;
-    time_t examiningEndTime;
-} Patient;
+// Ham noi bo: dieu chinh xuong duoi khi lay phan tu ra
+static void heapifyDown(PriorityQueue* pq, int idx) {
+    int smallest = idx;
+    int left = 2*idx + 1;
+    int right = 2*idx + 2;
 
-typedef struct {
-    Patient* data[MAX_PATIENTS];
-    int size;
-} PriorityQueue;
+    if (left < pq->size && compare(pq->data[left], pq->data[smallest]) < 0)
+        smallest = left;
+    if (right < pq->size && compare(pq->data[right], pq->data[smallest]) < 0)
+        smallest = right;
 
+    if (smallest != idx) {
+        swap(&pq->data[idx], &pq->data[smallest]);
+        heapifyDown(pq, smallest);
+    }
+}
+
+// Ham public: khoi tao hang doi
 void initQueue(PriorityQueue* pq) {
     pq->size = 0;
 }
 
-int comparePatients(Patient* a, Patient* b) {
-    if (a->caseType == b->caseType)
-        return a->arrivalTime > b->arrivalTime;
-    return a->caseType > b->caseType;
+// Ham public: kiem tra hang doi rong
+int isEmpty(PriorityQueue* pq) {
+    return pq->size == 0;
 }
 
+// Ham public: them benh nhan vao hang doi
 void enqueue(PriorityQueue* pq, Patient* p) {
     if (pq->size >= MAX_PATIENTS) {
-        printf("Warning: queue is full!\n");
+        printf("Hang doi day!\n");
         return;
     }
-
-    pq->data[pq->size++] = p;
-
-    for (int i = pq->size - 1; i > 0 && comparePatients(pq->data[i - 1], pq->data[i]); --i) {
-        Patient* temp = pq->data[i];
-        pq->data[i] = pq->data[i - 1];
-        pq->data[i - 1] = temp;
-    }
-
-    printf("Added: %s | Priority: %d | Arrival: %s", p->name, p->caseType, ctime(&(p->arrivalTime)));
+    pq->data[pq->size] = p;
+    heapifyUp(pq, pq->size);
+    pq->size++;
+    printf("Da them: %s | ID: %s\n", p->name, p->id);
 }
 
+// Ham public: lay benh nhan uu tien cao nhat ra khoi hang doi
 Patient* dequeue(PriorityQueue* pq) {
-    if (pq->size == 0) {
-        printf("Warning: queue is empty.\n");
+    if (isEmpty(pq)) {
+        printf("Hang doi rong.\n");
         return NULL;
     }
-
-    Patient* p = pq->data[0];
-    for (int i = 1; i < pq->size; ++i) {
-        pq->data[i - 1] = pq->data[i];
-    }
+    Patient* top = pq->data[0];
+    pq->data[0] = pq->data[pq->size - 1];
     pq->size--;
-
-    p->status = EXAMINING;
-    p->examiningStartTime = time(NULL);
-
-    printf("\nExamining: %s | Start: %s", p->name, ctime(&(p->examiningStartTime)));
-
-    sleep(2); // simulate
-
-    p->examiningEndTime = time(NULL);
-    p->status = EXAMINED;
-
-    printf("Finished: %s\n", ctime(&(p->examiningEndTime)));
-
-    return p;
+    heapifyDown(pq, 0);
+    printf("Lay ra: %s | ID: %s\n", top->name, top->id);
+    return top;
 }
 
+// Ham public: hien thi tat ca benh nhan trong hang doi
 void showQueue(PriorityQueue* pq) {
-    printf("\nQueue (%d patients):\n", pq->size);
-    for (int i = 0; i < pq->size; ++i) {
+    printf("Hang doi (%d benh nhan):\n", pq->size);
+    for (int i = 0; i < pq->size; i++) {
         Patient* p = pq->data[i];
-        const char* statusStr = p->status == NOT_EXAMINED ? "Not examined" :
-                                p->status == EXAMINING ? "Being examined" : "Examined";
-
-        printf("- %s | ID: %s | Priority: %d | Status: %s | Arrival: %s",
-               p->name, p->id, p->caseType, statusStr, ctime(&(p->arrivalTime)));
+        const char* statusStr = p->status == NOT_EXAMINED ? "Chua kham"
+                                : p->status == EXAMINING ? "Dang kham"
+                                : "Da kham";
+        printf("- %s | ID: %s | Uu tien: %d | Trang thai: %s | Thoi gian den: %s",
+               p->name, p->id, p->caseType, statusStr, ctime(&p->arrivalTime));
     }
-}
-
-int main() {
-    PriorityQueue pq;
-    initQueue(&pq);
-
-    Patient* p1 = malloc(sizeof(Patient));
-    strcpy(p1->id, "BN01");
-    strcpy(p1->name, "Nguyen Van A");
-    p1->year = 1980;
-    p1->status = NOT_EXAMINED;
-    p1->caseType = EMERGENCY;
-    p1->arrivalTime = time(NULL);
-    enqueue(&pq, p1);
-
-    sleep(1);
-
-    Patient* p2 = malloc(sizeof(Patient));
-    strcpy(p2->id, "BN02");
-    strcpy(p2->name, "Tran Thi B");
-    p2->year = 1992;
-    p2->status = NOT_EXAMINED;
-    p2->caseType = NORMAL;
-    p2->arrivalTime = time(NULL);
-    enqueue(&pq, p2);
-
-    sleep(1);
-    
-    Patient* p3 = malloc(sizeof(Patient));
-    strcpy(p3->id, "BN03");
-    strcpy(p3->name, "Le Van C");
-    p3->year = 1985;
-    p3->status = NOT_EXAMINED;
-    p3->caseType = ROUTINE;
-    p3->arrivalTime = time(NULL);
-    enqueue(&pq, p3);
-
-    sleep(1);
-
-    Patient* p4 = malloc(sizeof(Patient));
-    strcpy(p4->id, "BN04");
-    strcpy(p4->name, "Pham Van D");
-    p4->year = 2000;
-    p4->status = NOT_EXAMINED;
-    p4->caseType = CONSULTATION;
-    p4->arrivalTime = time(NULL);
-    enqueue(&pq, p4);
-
-    showQueue(&pq);
-
-    while (1) {
-        Patient* done = dequeue(&pq);
-        if (done == NULL) break;
-    }
-
-    free(p1);
-    free(p2);
-    free(p3);
-    free(p4);
-
-    return 0;
 }
