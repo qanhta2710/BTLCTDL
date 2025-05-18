@@ -2,7 +2,7 @@
 #define PRIORITYQUEUE_H
 
 #include "Examine/patient.h"
-
+#include <stdbool.h>
 #define MAX_PATIENTS 1000 // MAX_SIZE
 
 typedef struct {
@@ -11,7 +11,7 @@ typedef struct {
 } PriorityQueue;
 
 void initQueue(PriorityQueue* pq);
-int isEmpty(PriorityQueue* pq);
+bool isEmpty(PriorityQueue* pq);
 void enqueue(PriorityQueue* pq, Patient* p);
 Patient* dequeue(PriorityQueue* pq);
 void showQueue(PriorityQueue* pq);

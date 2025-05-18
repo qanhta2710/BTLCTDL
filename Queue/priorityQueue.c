@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include "priorityQueue.h"
-#include <stdbool.h>
 
 static const char *getCaseTypeName(CaseType caseType) {
     switch (caseType) {
