@@ -31,7 +31,6 @@ typedef struct PatientNode {
     struct PatientNode *next;
 } PatientNode;
 
-// Hàm chứa danh sách liên kết đơn cho các bệnh nhân
 typedef struct PatientList {
     PatientNode *head;
 } PatientList;

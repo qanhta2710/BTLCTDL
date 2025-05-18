@@ -1,12 +1,11 @@
- #include <stdio.h>
+#include <stdio.h>
 #include <time.h>
 #include "Examine/patient.h"
 #include "Examine/examination.h"
 
-// Start the examination for a patient
 void startExamination(Patient *patient) {
     if (patient == NULL) {
-        printf("Error: Invalid patient (NULL).\n");
+        printf("Invalid patient\n");
         return;
     }
 
@@ -18,14 +17,12 @@ void startExamination(Patient *patient) {
     patient->status = EXAMINING;
     patient->examiningStartTime = time(NULL);
 
-    printf("Examination started for patient %s at %s", 
-           patient->name, ctime(&(patient->examiningStartTime)));
+    printf("Examination started for patient %s at %s", patient->name, ctime(&(patient->examiningStartTime)));
 }
 
-// Finish the examination for a patient
 void finishExamination(Patient *patient) {
     if (patient == NULL) {
-        printf("Error: Invalid patient (NULL).\n");
+        printf("Invalid patient\n");
         return;
     }
 
@@ -37,6 +34,5 @@ void finishExamination(Patient *patient) {
     patient->status = FINISHED;
     patient->examiningEndTime = time(NULL);
 
-    printf("Examination finished for patient %s at %s", 
-           patient->name, ctime(&(patient->examiningEndTime)));
+    printf("Examination finished for patient %s at %s", patient->name, ctime(&(patient->examiningEndTime)));
 }

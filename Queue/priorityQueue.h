@@ -1,20 +1,21 @@
-#ifndef PRIORITY_QUEUE_H
-#define PRIORITY_QUEUE_H
+#ifndef PRIORITYQUEUE_H
+#define PRIORITYQUEUE_H
 
 #include "Examine/patient.h"
 #include <stdbool.h>
+#define MAX_PATIENTS 1000 // MAX_SIZE
 
-typedef struct PriorityQueue {
-    Patient **patient;
-    int size; // Kích thước hiện tại 
-    int capacity; // Kích thước tối đa
+typedef struct {
+    Patient* data[MAX_PATIENTS];
+    int size;
 } PriorityQueue;
 
-PriorityQueue *createPriorityQueue(); // Tạo với kích thước tối đa mặc định là 1000
-void enqueue(PriorityQueue *pq, Patient *patient);
-Patient *dequeue(PriorityQueue *pq);
-bool isEmpty(PriorityQueue *pq); // Kiểm tra hàng đợi có rỗng không (nếu không dùng đến thì bỏ hàm này)
-void freePriorityQueue(PriorityQueue *pq);
-void printPriorityQueue(PriorityQueue *pq); // In ra hàng đợi hiện thời
+void initQueue(PriorityQueue* pq);
+bool isEmpty(PriorityQueue* pq);
+void enqueue(PriorityQueue* pq, Patient* p);
+Patient* dequeue(PriorityQueue* pq);
+void showQueue(PriorityQueue* pq);
+static const char *getCaseTypeName(CaseType caseType);
+static const char *getStatusName(Status status);
 
 #endif

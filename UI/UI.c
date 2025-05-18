@@ -24,7 +24,7 @@ void clearScreen() {
     printf("\033[H\033[J");
 }
 
-const char *getCaseTypeName(CaseType caseType) {
+static const char *getCaseTypeName(CaseType caseType) {
     switch (caseType) {
         case EMERGENCY: 
             return "Emergency";
@@ -39,7 +39,7 @@ const char *getCaseTypeName(CaseType caseType) {
     }
 }
 
-const char *getStatusName(Status status) {
+static const char *getStatusName(Status status) {
     switch (status) {
         case WAITING:
             return "Waiting";
@@ -119,9 +119,8 @@ void processUserInput(PatientList *list, PriorityQueue *pq) {
                 printf("Queue is empty\n");
             } else {
                 Patient *nextPatient = dequeue(pq);
+                printf("Call patient: %s | ID: %s\n", nextPatient->name, nextPatient->id);
                 startExamination(nextPatient);
-                printf("Calling ID: %s\n", nextPatient->id);
-                printf("Patient Name: %s\n", nextPatient->name);
             }
             printf("Press any key to continue...\n");
             getchar();

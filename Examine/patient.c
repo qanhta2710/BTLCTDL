@@ -3,7 +3,6 @@
 #include <string.h>
 #include "Examine/patient.h"
 
-// Tạo bệnh nhân mới
 Patient *newPatient(char *id, char *name, int year, CaseType caseType) {
     Patient *patient = (Patient *)malloc(sizeof(Patient));
     if (patient == NULL) {
@@ -27,7 +26,6 @@ Patient *newPatient(char *id, char *name, int year, CaseType caseType) {
     return patient;
 }
 
-// Thêm bệnh nhân vào danh sách
 void addPatient(PatientList *list, Patient *patient) {
     PatientNode *newNode = (PatientNode *)malloc(sizeof(PatientNode));
     if (newNode == NULL) {
@@ -49,7 +47,6 @@ void addPatient(PatientList *list, Patient *patient) {
     return;
 }
 
-// Tạo danh sách bệnh nhân
 PatientList *createPatientList() {
     PatientList *list = (PatientList *)malloc(sizeof(PatientList));
     if (list == NULL) {
@@ -60,7 +57,6 @@ PatientList *createPatientList() {
     return list;
 }
 
-// Giải phóng bộ nhớ
 void freePatientList(PatientList *list) {
     if (list == NULL) {
         return;
