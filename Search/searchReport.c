@@ -2,29 +2,28 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-#include "patient.h"
+#include "Examine/patient.h"
 
-// Helper: convert CaseType to string
+// Helper: convert CaseType to string (lowercase)
 const char* caseTypeToString(CaseType type) {
     switch (type) {
-        case EMERGENCY: return "EMERGENCY";
-        case NORMAL: return "NORMAL";
-        case ROUTINE: return "ROUTINE";
-        case CONSULTATION: return "CONSULTATION";
-        default: return "UNKNOWN";
+        case EMERGENCY: return "Emergency";
+        case NORMAL: return "Normal";
+        case ROUTINE: return "Routine";
+        case CONSULTATION: return "Consultation";
+        default: return "Unknown";
     }
 }
 
-// Helper: convert Status to string
+// Helper: convert Status to string (lowercase)
 const char* statusToString(Status status) {
     switch (status) {
-        case WAITING: return "WAITING";
-        case EXAMINING: return "EXAMINING";
-        case FINISHED: return "FINISHED";
-        default: return "UNKNOWN";
+        case WAITING: return "Waiting";
+        case EXAMINING: return "Examining";
+        case FINISHED: return "Finished";
+        default: return "Unknown";
     }
 }
-
 
 // List patients sorted by priority (high to low), and within same priority, by earliest arrival time
 void listPatientsByPriority(PatientList* list) {
@@ -67,29 +66,33 @@ void listPatientsByPriority(PatientList* list) {
         }
     }
 
-    // Step 3: Print
-    printf("Sorted list by priority (desc) and arrival time (asc):\n");
-    printf("ID       | Name                    | Birth Year | Priority       | Arrival Time         | Status\n");
-    printf("---------------------------------------------------------------------------------------------------\n");
+    // Step 3: Print with UI format
+    printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
+    printf("| ID         | Name                 | Birth Year | Status     | Arrival Time        | Case Type      | Examining Time      | Finished Time       |\n");
+    printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
 
     for (int i = 0; i < count; i++) {
-        char timeStr[26];
-        struct tm* tm_info = localtime(&array[i]->arrivalTime);
-        strftime(timeStr, 26, "%Y-%m-%d %H:%M:%S", tm_info);
+        char arrivalBuffer[100], startBuffer[100], endBuffer[100];
+        strftime(arrivalBuffer, sizeof(arrivalBuffer), "%d-%m-%Y %H:%M:%S", localtime(&array[i]->arrivalTime));
+        strftime(startBuffer, sizeof(startBuffer), "%d-%m-%Y %H:%M:%S", localtime(&array[i]->examiningStartTime));
+        strftime(endBuffer, sizeof(endBuffer), "%d-%m-%Y %H:%M:%S", localtime(&array[i]->examiningEndTime));
 
-        printf("%-8s | %-23s | %-9d | %-14s | %-20s | %-10s\n",
+        printf("| %-10s | %-20s | %-10d | %-10s | %-19s | %-14s | %-19s | %-19s |\n",
                array[i]->id,
                array[i]->name,
                array[i]->year,
+               statusToString(array[i]->status),
+               arrivalBuffer,
                caseTypeToString(array[i]->caseType),
-               timeStr,
-               statusToString(array[i]->status));
+               array[i]->examiningStartTime == 0 ? "Not started" : startBuffer,
+               array[i]->examiningEndTime == 0 ? "Not finished" : endBuffer);
     }
+    printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
 
     free(array);
 }
 
-// Search patient by name (print directly)
+// Search patient by name (print directly with UI format)
 void searchByName(PatientList* list, char* name) {
     if (list == NULL || list->head == NULL || name == NULL) {
         printf("Invalid input.\n");
@@ -98,67 +101,55 @@ void searchByName(PatientList* list, char* name) {
 
     int found = 0;
     PatientNode* current = list->head;
+    
     while (current != NULL) {
         if (strcmp(current->patient->name, name) == 0) {
             if (!found) {
-                printf("Patient(s) with name \"%s\":\n", name);
-                printf("ID       | Name                    | Birth Year | Priority       | Arrival Time         | Status\n");
-                printf("---------------------------------------------------------------------------------------------------\n");
+                printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
+                printf("| ID         | Name                 | Birth Year | Status     | Arrival Time        | Case Type      | Examining Time      | Finished Time       |\n");
+                printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
             }
 
-            char timeStr[26];
-            struct tm* tm_info = localtime(&current->patient->arrivalTime);
-            strftime(timeStr, 26, "%Y-%m-%d %H:%M:%S", tm_info);
+            char arrivalBuffer[100], startBuffer[100], endBuffer[100];
+            strftime(arrivalBuffer, sizeof(arrivalBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->patient->arrivalTime));
+            strftime(startBuffer, sizeof(startBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->patient->examiningStartTime));
+            strftime(endBuffer, sizeof(endBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->patient->examiningEndTime));
 
-            printf("%-8s | %-23s | %-9d | %-14s | %-20s | %-10s\n",
+            printf("| %-10s | %-20s | %-10d | %-10s | %-19s | %-14s | %-19s | %-19s |\n",
                    current->patient->id,
                    current->patient->name,
                    current->patient->year,
+                   statusToString(current->patient->status),
+                   arrivalBuffer,
                    caseTypeToString(current->patient->caseType),
-                   timeStr,
-                   statusToString(current->patient->status));
+                   current->patient->examiningStartTime == 0 ? "Not started" : startBuffer,
+                   current->patient->examiningEndTime == 0 ? "Not finished" : endBuffer);
 
             found = 1;
         }
-
         current = current->next;
     }
 
-    if (!found) {
+    if (found) {
+        printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
+    } else {
         printf("No patient found with name \"%s\".\n", name);
     }
 }
 
-// Search patient by ID (print directly)
-void searchByID(PatientList* list, char* id) {
+// Search patient by ID (return Patient* if found, NULL otherwise)
+Patient* searchByID(PatientList* list, char* id) {
     if (list == NULL || list->head == NULL || id == NULL) {
-        printf("Invalid input.\n");
-        return;
+        return NULL;
     }
 
     PatientNode* current = list->head;
     while (current != NULL) {
         if (strcmp(current->patient->id, id) == 0) {
-            printf("Patient with ID \"%s\":\n", id);
-            printf("ID       | Name                    | Birth Year | Priority       | Arrival Time         | Status\n");
-            printf("---------------------------------------------------------------------------------------------------\n");
-
-            char timeStr[26];
-            struct tm* tm_info = localtime(&current->patient->arrivalTime);
-            strftime(timeStr, 26, "%Y-%m-%d %H:%M:%S", tm_info);
-
-            printf("%-8s | %-23s | %-9d | %-14s | %-20s | %-10s\n",
-                   current->patient->id,
-                   current->patient->name,
-                   current->patient->year,
-                   caseTypeToString(current->patient->caseType),
-                   timeStr,
-                   statusToString(current->patient->status));
-            return;
+            return current->patient;
         }
-
         current = current->next;
     }
 
-    printf("No patient found with ID \"%s\".\n", id);
+    return NULL;
 }
