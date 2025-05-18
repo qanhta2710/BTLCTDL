@@ -4,7 +4,6 @@
 #include <time.h>
 #include "Examine/patient.h"
 
-// Helper: convert CaseType to string (lowercase)
 const char* caseTypeToString(CaseType type) {
     switch (type) {
         case EMERGENCY: return "Emergency";
@@ -15,7 +14,6 @@ const char* caseTypeToString(CaseType type) {
     }
 }
 
-// Helper: convert Status to string (lowercase)
 const char* statusToString(Status status) {
     switch (status) {
         case WAITING: return "Waiting";
@@ -25,7 +23,6 @@ const char* statusToString(Status status) {
     }
 }
 
-// List patients sorted by priority (high to low), and within same priority, by earliest arrival time
 void listPatientsByPriority(PatientList* list) {
     if (list == NULL || list->head == NULL) {
         printf("The patient list is empty.\n");
@@ -52,7 +49,6 @@ void listPatientsByPriority(PatientList* list) {
         current = current->next;
     }
 
-    // Step 2: Sort (Bubble sort) by priority and arrivalTime
     for (int i = 0; i < count - 1; i++) {
         for (int j = i + 1; j < count; j++) {
             int pri_i = array[i]->caseType;
@@ -66,7 +62,6 @@ void listPatientsByPriority(PatientList* list) {
         }
     }
 
-    // Step 3: Print with UI format
     printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
     printf("| ID         | Name                 | Birth Year | Status     | Arrival Time        | Case Type      | Examining Time      | Finished Time       |\n");
     printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
@@ -92,7 +87,6 @@ void listPatientsByPriority(PatientList* list) {
     free(array);
 }
 
-// Search patient by name (print directly with UI format)
 void searchByName(PatientList* list, char* name) {
     if (list == NULL || list->head == NULL || name == NULL) {
         printf("Invalid input.\n");
@@ -137,7 +131,6 @@ void searchByName(PatientList* list, char* name) {
     }
 }
 
-// Search patient by ID (return Patient* if found, NULL otherwise)
 Patient* searchByID(PatientList* list, char* id) {
     if (list == NULL || list->head == NULL || id == NULL) {
         return NULL;

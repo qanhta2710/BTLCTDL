@@ -15,7 +15,5 @@ bool isEmpty(PriorityQueue* pq);
 void enqueue(PriorityQueue* pq, Patient* p);
 Patient* dequeue(PriorityQueue* pq);
 void showQueue(PriorityQueue* pq);
-static const char *getCaseTypeName(CaseType caseType);
-static const char *getStatusName(Status status);
 
 #endif
