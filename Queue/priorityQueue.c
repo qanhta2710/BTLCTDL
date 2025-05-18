@@ -104,8 +104,9 @@ Patient* dequeue(PriorityQueue* pq) {
 
 void showQueue(PriorityQueue* pq) {
     printf("%d Patients Waiting:\n", pq->size);
-    for (int i = 0; i < pq->size; i++) {
-        Patient* p = pq->data[i];
+    PriorityQueue tempQueue = *pq;
+    while (!isEmpty(&tempQueue)) {
+        Patient *p = dequeue(&tempQueue);
         char arrivalBuffer[100], startBuffer[100], endBuffer[100];
         strftime(arrivalBuffer, sizeof(arrivalBuffer), "%d-%m-%Y %H:%M:%S", localtime(&p->arrivalTime));
         strftime(startBuffer, sizeof(startBuffer), "%d-%m-%Y %H:%M:%S", localtime(&p->examiningStartTime));

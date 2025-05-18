@@ -23,70 +23,6 @@ const char* statusToString(Status status) {
     }
 }
 
-void listPatientsByPriority(PatientList* list) {
-    if (list == NULL || list->head == NULL) {
-        printf("The patient list is empty.\n");
-        return;
-    }
-
-    // Step 1: Copy to array
-    int count = 0;
-    PatientNode* current = list->head;
-    while (current != NULL) {
-        count++;
-        current = current->next;
-    }
-
-    Patient** array = (Patient**)malloc(sizeof(Patient*) * count);
-    if (array == NULL) {
-        printf("Memory allocation failed.\n");
-        return;
-    }
-
-    current = list->head;
-    for (int i = 0; i < count; i++) {
-        array[i] = current->patient;
-        current = current->next;
-    }
-
-    for (int i = 0; i < count - 1; i++) {
-        for (int j = i + 1; j < count; j++) {
-            int pri_i = array[i]->caseType;
-            int pri_j = array[j]->caseType;
-
-            if (pri_i > pri_j || (pri_i == pri_j && array[i]->arrivalTime > array[j]->arrivalTime)) {
-                Patient* temp = array[i];
-                array[i] = array[j];
-                array[j] = temp;
-            }
-        }
-    }
-
-    printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
-    printf("| ID         | Name                 | Birth Year | Status     | Arrival Time        | Case Type      | Examining Time      | Finished Time       |\n");
-    printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
-
-    for (int i = 0; i < count; i++) {
-        char arrivalBuffer[100], startBuffer[100], endBuffer[100];
-        strftime(arrivalBuffer, sizeof(arrivalBuffer), "%d-%m-%Y %H:%M:%S", localtime(&array[i]->arrivalTime));
-        strftime(startBuffer, sizeof(startBuffer), "%d-%m-%Y %H:%M:%S", localtime(&array[i]->examiningStartTime));
-        strftime(endBuffer, sizeof(endBuffer), "%d-%m-%Y %H:%M:%S", localtime(&array[i]->examiningEndTime));
-
-        printf("| %-10s | %-20s | %-10d | %-10s | %-19s | %-14s | %-19s | %-19s |\n",
-               array[i]->id,
-               array[i]->name,
-               array[i]->year,
-               statusToString(array[i]->status),
-               arrivalBuffer,
-               caseTypeToString(array[i]->caseType),
-               array[i]->examiningStartTime == 0 ? "Not started" : startBuffer,
-               array[i]->examiningEndTime == 0 ? "Not finished" : endBuffer);
-    }
-    printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
-
-    free(array);
-}
-
 void searchByName(PatientList* list, char* name) {
     if (list == NULL || list->head == NULL || name == NULL) {
         printf("Invalid input.\n");
@@ -103,7 +39,10 @@ void searchByName(PatientList* list, char* name) {
                 printf("| ID         | Name                 | Birth Year | Status     | Arrival Time        | Case Type      | Examining Time      | Finished Time       |\n");
                 printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
             }
-
+            if (current->patient->examiningEndTime != 0) {
+                current = current->next;
+                continue;
+            }
             char arrivalBuffer[100], startBuffer[100], endBuffer[100];
             strftime(arrivalBuffer, sizeof(arrivalBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->patient->arrivalTime));
             strftime(startBuffer, sizeof(startBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->patient->examiningStartTime));
@@ -139,10 +78,45 @@ Patient* searchByID(PatientList* list, char* id) {
     PatientNode* current = list->head;
     while (current != NULL) {
         if (strcmp(current->patient->id, id) == 0) {
-            return current->patient;
+            if (current->patient->examiningEndTime == 0) {
+                return current->patient;
+            } else {
+                return NULL;
+            }
         }
         current = current->next;
     }
 
     return NULL;
+}
+
+void showAllPatients(PatientList *list) {
+    if (list == NULL) {
+        printf("Memory allocation failed\n");
+    }
+    PatientNode *current = list->head;
+    printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
+    printf("| ID         | Name                 | Birth Year | Status     | Arrival Time        | Case Type      | Examining Time      | Finished Time       |\n");
+    printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
+    while (current != NULL) {
+        if (current->patient->examiningEndTime != 0) {
+            current = current->next;
+            continue;
+        }
+        char arrivalBuffer[100], startBuffer[100], endBuffer[100];
+        strftime(arrivalBuffer, sizeof(arrivalBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->patient->arrivalTime));
+        strftime(startBuffer, sizeof(startBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->patient->examiningStartTime));
+        strftime(endBuffer, sizeof(endBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->patient->examiningEndTime));
+
+        printf("| %-10s | %-20s | %-10d | %-10s | %-19s | %-14s | %-19s | %-19s |\n",
+            current->patient->id,
+            current->patient->name,
+            current->patient->year,
+            statusToString(current->patient->status),
+            arrivalBuffer,
+            caseTypeToString(current->patient->caseType),
+            current->patient->examiningStartTime == 0 ? "Not started" : startBuffer,
+            current->patient->examiningEndTime == 0 ? "Not finished" : endBuffer);
+        current = current->next;
+    }
 }

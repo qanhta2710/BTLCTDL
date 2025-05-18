@@ -1,16 +1,10 @@
 #ifndef SEARCH_REPORT_H
 #define SEARCH_REPORT_H
 
-#include "Examine/patient.h"  // Gồm định nghĩa struct Patient, Status, PatientNode
+#include "Examine/patient.h"
 
-
-// Liệt kê bệnh nhân theo mức độ ưu tiên (1: thấp nhất)
-void listPatientsByPriority(PatientList* list);
-
-// Tìm kiếm bệnh nhân theo tên (sử dụng tìm kiếm tuần tự)
 void searchByName(PatientList* list, char* name);
-
-// Tìm kiếm bệnh nhân theo ID (sử dụng tìm kiếm tuần tự)
 Patient* searchByID(PatientList* list, char* id);
+void showAllPatients(PatientList* list);
 
 #endif
