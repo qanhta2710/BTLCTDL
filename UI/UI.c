@@ -4,6 +4,7 @@
 #include "UI.h"
 #include "Search/searchReport.h"
 #include "Examine/examination.h"
+#include "History/history.h"
 
 void displayMenu() {
     printf("\n=== Hospital Management System ===\n");
@@ -12,9 +13,10 @@ void displayMenu() {
     printf("3. Finish examination for a patient\n");
     printf("4. Search patient by ID\n");
     printf("5. Search patient by name\n");
-    printf("6. List patients by priority\n");
-    printf("7. Show Queue\n");
-    printf("8. Exit\n");
+    printf("6. Show Queue\n");
+    printf("7. List all patients\n");
+    printf("8. Search patient history by name\n");
+    printf("9. Exit\n");
     printf("Enter your choice: ");
 }
 
@@ -50,11 +52,10 @@ static const char *getStatusName(Status status) {
     }
 }
 
-void processUserInput(PatientList *list, PriorityQueue *pq) {
+void processUserInput(PatientList *list, PriorityQueue *pq, historyList *history) {
     int choice, caseTypeChoice;
     char id[10], name[255];
     int year, caseType;
-    
     do {
         displayMenu();
         scanf("%d", &choice);
@@ -136,7 +137,7 @@ void processUserInput(PatientList *list, PriorityQueue *pq) {
                 printf("Patient is not examined or already finished\n");
             } else {
                 finishExamination(finishedPatient);
-                printf("Finished examinating for patient: %s\n", finishedPatient->name);
+                addVisitHistory(history, finishedPatient);
             }
             printf("Press any key to continue...\n");
             getchar();
@@ -184,25 +185,33 @@ void processUserInput(PatientList *list, PriorityQueue *pq) {
             printf("Press any key to continue...\n");
             getchar();
             break;
-        case 6: 
-            clearScreen();
-            printf("=== List Patients by Priority ===\n");
-            listPatientsByPriority(list);
-            printf("Press any key to continue...\n");
-            getchar();
-            break;
-        case 7:
+        case 6:
             clearScreen();
             showQueue(pq); 
             printf("Press any key to continue...\n");
             getchar();
             break;
+        case 7:
+            clearScreen();
+            showAllPatients(list);
+            printf("Press any key to continue...\n");
+            getchar();
+            break;
         case 8:
+            clearScreen();
+            printf("Enter patient name: ");
+            fgets(name, sizeof(name), stdin);
+            name[strcspn(name, "\n")] = 0;
+            showVisitHistoryByName(history, name);
+            printf("Press any key to continue...\n");
+            getchar();
+            break;
+        case 9:
             clearScreen();
             printf("Exiting...\n");
             break;
         default:
             printf("Invalid Option");
         }
-    } while (choice != 8);
+    } while (choice != 9);
 }

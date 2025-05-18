@@ -16,7 +16,7 @@ typedef enum { WAITING, EXAMINING, FINISHED } Status;
 // Cấu trúc bệnh nhân
 typedef struct Patient {
     char id[10]; // Mã bệnh nhân
-    char name[50]; // Họ tên
+    char name[255]; // Họ tên
     int year;      // Năm sinh
     Status status; // Trạng thái khám
     time_t arrivalTime; // Thời gian đến khám
