@@ -16,7 +16,8 @@ void displayMenu() {
     printf("6. Show Queue\n");
     printf("7. List all patients\n");
     printf("8. Search patient history by name\n");
-    printf("9. Exit\n");
+    printf("9. Show history\n");
+    printf("10. Exit\n");
     printf("Enter your choice: ");
 }
 
@@ -199,10 +200,16 @@ void processUserInput(PatientList *list, PriorityQueue *pq, historyList *history
             break;
         case 9:
             clearScreen();
+            showHistory(history);
+            printf("Press any key to continue...\n");
+            getchar();
+            break;
+        case 10:
+            clearScreen();
             printf("Exiting...\n");
             break;
         default:
             printf("Invalid Option");
         }
-    } while (choice != 9);
+    } while (choice != 10);
 }

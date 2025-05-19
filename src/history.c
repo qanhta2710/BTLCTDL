@@ -41,6 +41,10 @@ void addVisitHistory(historyList *list, Patient *patient) {
 }
 
 void showHistory(historyList *list) {
+    if (list == NULL) {
+        printf("List is empty\n");
+        return;
+    }
     historyNode *current = list->head;
     printf("+------------------------+----------------------+------------+---------------------+---------------------+---------------------+\n");
     printf("| Visited ID             | Name                 | Birth Year | Arrival Time        | Examining Time      | Finished Time       |\n");

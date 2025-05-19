@@ -63,9 +63,7 @@ void searchByName(PatientList* list, char* name) {
         current = current->next;
     }
 
-    if (found) {
-        printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
-    } else {
+    if (!found) {
         printf("No patient found with name \"%s\".\n", name);
     }
 }
