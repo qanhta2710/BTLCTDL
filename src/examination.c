@@ -3,6 +3,7 @@
 #include "patient.h"
 #include "examination.h"
 
+//Bat dau kham 
 void startExamination(Patient *patient) {
     if (patient == NULL) {
         printf("Invalid patient\n");
@@ -20,6 +21,7 @@ void startExamination(Patient *patient) {
     printf("Examination started for patient %s at %s", patient->name, ctime(&(patient->examiningStartTime)));
 }
 
+//Ket thuc kham
 void finishExamination(Patient *patient) {
     if (patient == NULL) {
         printf("Invalid patient\n");
@@ -36,3 +38,4 @@ void finishExamination(Patient *patient) {
 
     printf("Examination finished for patient %s at %s", patient->name, ctime(&(patient->examiningEndTime)));
 }
+// Quan li qua trinh kham benh

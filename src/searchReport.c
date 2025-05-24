@@ -88,14 +88,33 @@ Patient* searchByID(PatientList* list, char* id) {
     return NULL;
 }
 
+
 void showAllPatients(PatientList *list) {
     if (list == NULL) {
         printf("Memory allocation failed\n");
+        return;
     }
+    
+    // Open file for writing
+    FILE *file = fopen("Patients.txt", "w");
+    if (file == NULL) {
+        printf("Failed to create Patients.txt file\n");
+    }
+    
     PatientNode *current = list->head;
+    
+    // Print to console
     printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
     printf("| ID         | Name                 | Birth Year | Status     | Arrival Time        | Case Type      | Examining Time      | Finished Time       |\n");
     printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
+    
+    // Write to file
+    if (file != NULL) {
+        fprintf(file, "+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
+        fprintf(file, "| ID         | Name                 | Birth Year | Status     | Arrival Time        | Case Type      | Examining Time      | Finished Time       |\n");
+        fprintf(file, "+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
+    }
+    
     while (current != NULL) {
         if (current->patient->examiningEndTime != 0) {
             current = current->next;
@@ -106,6 +125,7 @@ void showAllPatients(PatientList *list) {
         strftime(startBuffer, sizeof(startBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->patient->examiningStartTime));
         strftime(endBuffer, sizeof(endBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->patient->examiningEndTime));
 
+        // Print to console
         printf("| %-10s | %-20s | %-10d | %-10s | %-19s | %-14s | %-19s | %-19s |\n",
             current->patient->id,
             current->patient->name,
@@ -115,6 +135,30 @@ void showAllPatients(PatientList *list) {
             caseTypeToString(current->patient->caseType),
             current->patient->examiningStartTime == 0 ? "Not started" : startBuffer,
             current->patient->examiningEndTime == 0 ? "Not finished" : endBuffer);
+            
+        // Write to file
+        if (file != NULL) {
+            fprintf(file, "| %-10s | %-20s | %-10d | %-10s | %-19s | %-14s | %-19s | %-19s |\n",
+                current->patient->id,
+                current->patient->name,
+                current->patient->year,
+                statusToString(current->patient->status),
+                arrivalBuffer,
+                caseTypeToString(current->patient->caseType),
+                current->patient->examiningStartTime == 0 ? "Not started" : startBuffer,
+                current->patient->examiningEndTime == 0 ? "Not finished" : endBuffer);
+        }
+        
         current = current->next;
+    }
+    
+    // Print to console
+    printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
+    
+    // Write to file
+    if (file != NULL) {
+        fprintf(file, "+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
+        fclose(file);
+        printf("Patient list saved to Patients.txt\n");
     }
 }

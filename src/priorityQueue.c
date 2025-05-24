@@ -104,7 +104,23 @@ Patient* dequeue(PriorityQueue* pq) {
 
 void showQueue(PriorityQueue* pq) {
     printf("%d Patients Waiting:\n", pq->size);
+    
+    // Open file for writing
+    FILE *file = fopen("Queue.txt", "w");
+    if (file == NULL) {
+        printf("Failed to create Queue.txt file\n");
+    }
+    
     PriorityQueue tempQueue = *pq;
+    
+    // Write to file header
+    if (file != NULL) {
+        fprintf(file, "%d Patients Waiting:\n", pq->size);
+        fprintf(file, "+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
+        fprintf(file, "| ID         | Name                 | Birth Year | Status     | Arrival Time        | Case Type      | Examining Time      | Finished Time       |\n");
+        fprintf(file, "+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
+    }
+    
     while (!isEmpty(&tempQueue)) {
         Patient *p = dequeue(&tempQueue);
         char arrivalBuffer[100], startBuffer[100], endBuffer[100];
@@ -112,6 +128,7 @@ void showQueue(PriorityQueue* pq) {
         strftime(startBuffer, sizeof(startBuffer), "%d-%m-%Y %H:%M:%S", localtime(&p->examiningStartTime));
         strftime(endBuffer, sizeof(endBuffer), "%d-%m-%Y %H:%M:%S", localtime(&p->examiningEndTime));
 
+        // Print to console
         printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
         printf("| ID         | Name                 | Birth Year | Status     | Arrival Time        | Case Type      | Examining Time      | Finished Time       |\n");
         printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
@@ -125,5 +142,24 @@ void showQueue(PriorityQueue* pq) {
             p->examiningStartTime == 0 ? "Not started" : startBuffer,
             p->examiningEndTime == 0 ? "Not finished" : endBuffer);
         printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
+        
+        // Write to file
+        if (file != NULL) {
+            fprintf(file, "| %-10s | %-20s | %-10d | %-10s | %-19s | %-14s | %-19s | %-19s |\n",
+                p->id,
+                p->name,
+                p->year,
+                getStatusName(p->status),
+                arrivalBuffer,
+                getCaseTypeName(p->caseType),
+                p->examiningStartTime == 0 ? "Not started" : startBuffer,
+                p->examiningEndTime == 0 ? "Not finished" : endBuffer);
+            fprintf(file, "+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
+        }
+    }
+    
+    if (file != NULL) {
+        fclose(file);
+        printf("Queue data saved to Queue.txt\n");
     }
 }
