@@ -194,7 +194,7 @@ void processUserInput(PatientList *list, PriorityQueue *pq, historyList *history
             printf("Enter patient name: ");
             fgets(name, sizeof(name), stdin);
             name[strcspn(name, "\n")] = 0;
-            showVisitHistoryByName(history, name);
+            searchVisitHistoryByName(history, name);
             printf("Press any key to continue...\n");
             getchar();
             break;

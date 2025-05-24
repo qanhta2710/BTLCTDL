@@ -70,7 +70,7 @@ void showHistory(historyList *list) {
         current = current->next;
     }
 }
-void showVisitHistoryByName(historyList *list, const char *name) {
+void searchVisitHistoryByName(historyList *list, const char *name) {
     if (list == NULL) {
         printf("Memory allocation failed\n");
         return;

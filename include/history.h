@@ -26,7 +26,7 @@ typedef struct historyList {
 
 historyList *createHistory();
 void addVisitHistory(historyList *list, Patient *patient);
-void showVisitHistoryByName(historyList *list, const char *name);
+void searchVisitHistoryByName(historyList *list, const char *name);
 void freeList(historyList *list);
 void showHistory(historyList *list);
 
