@@ -35,8 +35,13 @@ void addVisitHistory(historyList *list, Patient *patient) {
     newVisit->data.examiningStartTime = patient->examiningStartTime;
     newVisit->data.examiningEndTime = patient->examiningEndTime;
 
-    newVisit->next = list->head;
-    list->head = newVisit;
+    if (list->head == NULL) {
+        list->head = newVisit;
+        list->tail = newVisit;
+    } else {
+        list->tail->next = newVisit;
+        list->tail = newVisit;
+    }
     printf("Added successfully\n");
 }
 

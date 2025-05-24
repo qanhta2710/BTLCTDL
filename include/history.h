@@ -21,6 +21,7 @@ typedef struct historyNode {
 
 typedef struct historyList {
     historyNode *head;
+    historyNode *tail;
 } historyList;
 
 historyList *createHistory();

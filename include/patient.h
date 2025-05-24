@@ -33,6 +33,7 @@ typedef struct PatientNode {
 
 typedef struct PatientList {
     PatientNode *head;
+    PatientNode *tail;
 } PatientList;
 
 Patient *newPatient(char *name, int year, CaseType caseType);

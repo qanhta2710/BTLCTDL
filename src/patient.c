@@ -42,12 +42,10 @@ void addPatient(PatientList *list, Patient *patient) {
     
     if (list->head == NULL) {
         list->head = newNode;
+        list->tail = newNode;
     } else {
-        PatientNode *current = list->head;
-        while (current->next != NULL) {
-            current = current->next;
-        }
-        current->next = newNode;
+        list->tail->next = newNode;
+        list->tail = newNode;
     }
     return;
 }
@@ -59,6 +57,7 @@ PatientList *createPatientList() {
         return NULL;
     }
     list->head = NULL;
+    list->tail = NULL;
     return list;
 }
 
@@ -73,6 +72,7 @@ void freePatientList(PatientList *list) {
         free(tmp->patient);
         free(tmp);
     }
+    list->head = NULL;
+    list->tail = NULL;
     free(list);
-    return;
 }
