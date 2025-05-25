@@ -10,6 +10,7 @@ historyList *createHistory() {
         return NULL;
     }
     list->head = NULL;
+    list->tail = NULL;
     return list;
 }
 
@@ -24,6 +25,9 @@ void addVisitHistory(historyList *list, Patient *patient) {
         return;
     }
     
+    memset(&newVisit->data, 0, sizeof(History));
+    newVisit->next = NULL;
+
     char timeStr[30];
     strftime(timeStr, sizeof(timeStr), "%Y%m%d%H%M%S", localtime(&patient->arrivalTime));
     sprintf(newVisit->data.visitedID, "%s_%s", patient->id, timeStr);
@@ -46,7 +50,7 @@ void addVisitHistory(historyList *list, Patient *patient) {
 }
 
 void showHistory(historyList *list) {
-    if (list == NULL) {
+    if (list == NULL || list->head == NULL) {
         printf("List is empty\n");
         return;
     }
@@ -108,6 +112,8 @@ void freeList(historyList *list) {
         current = current->next;
         free(tmp);
     }
+    list->head = NULL;
+    list->tail = NULL;
     free(list);
 }
 
