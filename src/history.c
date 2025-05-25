@@ -72,6 +72,7 @@ void showHistory(historyList *list) {
             startBuffer,
             endBuffer);
         current = current->next;
+        printf("+------------------------+----------------------+------------+---------------------+---------------------+---------------------+\n");
     }
 }
 void searchVisitHistoryByName(historyList *list, const char *name) {
@@ -97,6 +98,7 @@ void searchVisitHistoryByName(historyList *list, const char *name) {
                 arrivalBuffer,
                 startBuffer,
                 endBuffer);
+            printf("+------------------------+----------------------+------------+---------------------+---------------------+---------------------+\n");
         }
         current = current->next;
     }

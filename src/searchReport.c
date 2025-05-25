@@ -57,7 +57,7 @@ void searchByName(PatientList* list, char* name) {
                    caseTypeToString(current->patient->caseType),
                    current->patient->examiningStartTime == 0 ? "Not started" : startBuffer,
                    current->patient->examiningEndTime == 0 ? "Not finished" : endBuffer);
-
+            printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
             found = 1;
         }
         current = current->next;
@@ -115,6 +115,7 @@ void showAllPatients(PatientList *list) {
             caseTypeToString(current->patient->caseType),
             current->patient->examiningStartTime == 0 ? "Not started" : startBuffer,
             current->patient->examiningEndTime == 0 ? "Not finished" : endBuffer);
+        printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
         current = current->next;
     }
 }
