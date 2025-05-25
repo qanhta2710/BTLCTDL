@@ -58,6 +58,8 @@ void processUserInput(PatientList *list, PriorityQueue *pq, historyList *history
     char id[10], name[255];
     int year, caseType;
     do {
+        updatePatientsFile(list, "patients.txt");
+
         displayMenu();
         scanf("%d", &choice);
         getchar();
@@ -95,6 +97,7 @@ void processUserInput(PatientList *list, PriorityQueue *pq, historyList *history
             if (myPatient != NULL) {
                 addPatient(list, myPatient);
                 enqueue(pq, myPatient);
+                savePatientToFile(myPatient, "patients.txt");
                 printf("Patient ID: %s\n", myPatient->id);
                 printf("Patient added successfully\n");
             } else {
@@ -112,6 +115,7 @@ void processUserInput(PatientList *list, PriorityQueue *pq, historyList *history
                 Patient *nextPatient = dequeue(pq);
                 printf("Call patient: %s | ID: %s\n", nextPatient->name, nextPatient->id);
                 startExamination(nextPatient);
+                updatePatientsFile(list, "patients.txt");
             }
             printf("Press any key to continue...\n");
             getchar();
@@ -130,6 +134,7 @@ void processUserInput(PatientList *list, PriorityQueue *pq, historyList *history
             } else {
                 finishExamination(finishedPatient);
                 addVisitHistory(history, finishedPatient);
+                saveHistoryToFile(&history->tail->data, "history.txt");
             }
             printf("Press any key to continue...\n");
             getchar();

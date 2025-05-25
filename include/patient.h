@@ -40,5 +40,8 @@ Patient *newPatient(char *name, int year, CaseType caseType);
 void addPatient(PatientList *list, Patient *patient);
 PatientList *createPatientList();
 void freePatientList(PatientList *list);
+PatientList *loadPatientsFromFile(const char *filename);
+void savePatientToFile(Patient *patient, const char *filename);
+void updatePatientsFile(PatientList *list, const char *filename);
 
 #endif

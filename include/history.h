@@ -29,5 +29,7 @@ void addVisitHistory(historyList *list, Patient *patient);
 void searchVisitHistoryByName(historyList *list, const char *name);
 void freeList(historyList *list);
 void showHistory(historyList *list);
+void saveHistoryToFile(History *history, const char *filename);
+historyList *loadHistoryFromFile(const char *filename);
 
 #endif
