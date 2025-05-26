@@ -73,7 +73,7 @@ void showHistory(historyList *list) {
             startBuffer,
             endBuffer);
         current = current->next;
-        printf("+------------------------+----------------------+------------+---------------------+---------------------+---------------------+\n");
+        printf("+------------------------+--------------+----------------------+------------+---------------------+---------------------+---------------------+\n");
     }
 }
 
@@ -86,20 +86,19 @@ void searchVisitHistoryByIDCard(historyList *list, const char *IDCard) {
     printf("+------------------------+--------------+----------------------+------------+---------------------+---------------------+---------------------+\n");
     printf("| Visited ID             | IDCard       | Name                 | Birth Year | Arrival Time        | Examining Time      | Finished Time       |\n");
     printf("+------------------------+--------------+----------------------+------------+---------------------+---------------------+---------------------+\n");
-    while (current != NULL) {
+    while (strcmp(current->data.IDCard, IDCard) == 0) {
         char arrivalBuffer[100], startBuffer[100], endBuffer[100];
         strftime(arrivalBuffer, sizeof(arrivalBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->data.arrivalTime));
         strftime(startBuffer, sizeof(startBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->data.examiningStartTime));
         strftime(endBuffer, sizeof(endBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->data.examiningEndTime));
-
-            printf("| %-22s | %-20s | %-10d | %-19s | %-19s | %-19s |\n",
-                current->data.visitedID,
-                current->data.name,
-                current->data.year,
-                arrivalBuffer,
-                startBuffer,
-                endBuffer);
-        }
+        printf("| %-22s | %-12s | %-20s | %-10d | %-19s | %-19s | %-19s |\n",
+            current->data.visitedID,
+            current->data.IDCard,
+            current->data.name,
+            current->data.year,
+            arrivalBuffer,
+            startBuffer,
+            endBuffer);
         current = current->next;
     }
 }
