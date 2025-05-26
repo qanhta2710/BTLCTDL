@@ -17,7 +17,8 @@ void displayMenu() {
     printf("7. List all patients waiting or being examined\n");
     printf("8. Search patient history by ID Card\n");
     printf("9. Display medical history of all patients visited\n");
-    printf("10. Exit\n");
+    printf("10. Delete patient by ID\n");
+    printf("11. Exit\n");
     printf("Enter your choice: ");
 }
 
@@ -215,10 +216,20 @@ void processUserInput(PatientList *list, PriorityQueue *pq, historyList *history
             break;
         case 10:
             clearScreen();
+            printf("Enter patient ID: ");
+            fgets(id, sizeof(id), stdin);
+            id[strcspn(id, "\n")] = 0;
+            removePatient(list, id);
+            updatePatientsFile(list, "patients.txt");
+            printf("Press any key to continue...\n");
+            getchar();
+            break;
+        case 11:
+            clearScreen();
             printf("Exiting...\n");
             break;
         default:
             printf("Invalid Option");
         }
-    } while (choice != 10);
+    } while (choice != 11);
 }

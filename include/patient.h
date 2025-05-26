@@ -44,5 +44,6 @@ void freePatientList(PatientList *list);
 PatientList *loadPatientsFromFile(const char *filename);
 void savePatientToFile(Patient *patient, const char *filename);
 void updatePatientsFile(PatientList *list, const char *filename);
+void removePatient(PatientList *list, const char *patientID);
 
 #endif

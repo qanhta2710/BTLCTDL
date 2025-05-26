@@ -118,7 +118,7 @@ PatientList *loadPatientsFromFile(const char *filename) {
         line[strcspn(line, "\n")] = 0;
         if (strlen(line) == 0) {
             if (fields_read == 9 && status != FINISHED) {
-                if ((now - arrivalTime) > 1800) {
+                if ((now - arrivalTime) > 86400) {
                     fields_read = 0;
                     continue;
                 }
@@ -191,7 +191,7 @@ PatientList *loadPatientsFromFile(const char *filename) {
     }
 
     if (fields_read == 9 && status != FINISHED) {
-        if (!(arrivalTime > 0 && (now - arrivalTime) > 1800)) {
+        if (!(arrivalTime > 0 && (now - arrivalTime) > 86400)) {
             Patient *patient = (Patient *)malloc(sizeof(Patient));
             if (patient) {
                 strncpy(patient->id, id, sizeof(patient->id) - 1);
@@ -291,4 +291,31 @@ void updatePatientsFile(PatientList *list, const char *filename) {
     }
 
     fclose(file);
+}
+
+void removePatient(PatientList *list, const char *patientID) {
+    if (list == NULL || list->head == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+    PatientNode *prev = NULL;
+    PatientNode *current = list->head;
+    while (current != NULL) {
+        if (strcmp(current->patient->id, patientID) == 0) {
+            if (prev == NULL) {
+                list->head = current->next;
+                if (list->tail == current) list->tail = NULL;
+            } else {
+                prev->next = current->next;
+                if (list->tail == current) list->tail = prev;
+            }
+            free(current->patient);
+            free(current);
+            printf("Remove patient with ID %s\n", patientID);
+            return;
+        }
+        prev = current;
+        current = current->next;
+    }
+    printf("Patient with ID %s not found\n", patientID);
 }
