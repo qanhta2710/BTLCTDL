@@ -16,6 +16,7 @@ typedef enum { WAITING, EXAMINING, FINISHED } Status;
 // Cấu trúc bệnh nhân
 typedef struct Patient {
     char id[10]; // Mã bệnh nhân
+    char IDCard[20]; // Số CCCD
     char name[255]; // Họ tên
     int year;      // Năm sinh
     Status status; // Trạng thái khám
@@ -36,7 +37,7 @@ typedef struct PatientList {
     PatientNode *tail;
 } PatientList;
 
-Patient *newPatient(char *name, int year, CaseType caseType);
+Patient *newPatient(char *IDCard, char *name, int year, CaseType caseType);
 void addPatient(PatientList *list, Patient *patient);
 PatientList *createPatientList();
 void freePatientList(PatientList *list);

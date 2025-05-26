@@ -28,7 +28,7 @@ static void generate_code(char *code) {
     sprintf(code, "P%04d", patient_number++);
 }
 
-Patient *newPatient(char *name, int year, CaseType caseType) {
+Patient *newPatient(char *IDCard, char *name, int year, CaseType caseType) {
     Patient *patient = (Patient *)malloc(sizeof(Patient));
     if (patient == NULL) {
         printf("Memory allocation failed\n");
@@ -36,7 +36,8 @@ Patient *newPatient(char *name, int year, CaseType caseType) {
     }
 
     generate_code(patient->id);
-
+    strncpy(patient->IDCard, IDCard, sizeof(patient->IDCard) - 1);
+    patient->IDCard[sizeof(patient->IDCard) - 1] = '\0';
     strncpy(patient->name, name, sizeof(patient->name) - 1);
     patient->name[sizeof(patient->name) - 1] = '\0';
 
@@ -106,19 +107,27 @@ PatientList *loadPatientsFromFile(const char *filename) {
     }
 
     char line[256];
-    char id[10] = "", name[50] = "";
+    char id[10] = "", name[50] = "", IDCard[20] = "";
     int year = 0, status = 0, caseType = 0;
     long arrivalTime = 0, examiningStartTime = 0, examiningEndTime = 0;
     int fields_read = 0;
 
+    time_t now = time(NULL);
+
     while (fgets(line, sizeof(line), file)) {
         line[strcspn(line, "\n")] = 0;
         if (strlen(line) == 0) {
-            if (fields_read == 8 && status != FINISHED) { // Chỉ thêm nếu không phải FINISHED
+            if (fields_read == 9 && status != FINISHED) {
+                if ((now - arrivalTime) > 1800) {
+                    fields_read = 0;
+                    continue;
+                }
                 Patient *patient = (Patient *)malloc(sizeof(Patient));
                 if (patient) {
                     strncpy(patient->id, id, sizeof(patient->id) - 1);
                     patient->id[sizeof(patient->id) - 1] = '\0';
+                    strncpy(patient->IDCard, IDCard, sizeof(patient->IDCard) - 1);
+                    patient->IDCard[sizeof(patient->IDCard) - 1] = '\0';
                     strncpy(patient->name, name, sizeof(patient->name) - 1);
                     patient->name[sizeof(patient->name) - 1] = '\0';
                     patient->year = year;
@@ -141,6 +150,10 @@ PatientList *loadPatientsFromFile(const char *filename) {
         if (strncmp(line, "id: ", 4) == 0) {
             strncpy(id, line + 4, sizeof(id));
             id[sizeof(id) - 1] = '\0';
+            fields_read++;
+        } else if (strncmp(line, "IDCard: ", 8) == 0) {
+            strncpy(IDCard, line + 8, sizeof(IDCard));
+            IDCard[sizeof(IDCard) - 1] = '\0';
             fields_read++;
         } else if (strncmp(line, "name: ", 6) == 0) {
             strncpy(name, line + 6, sizeof(name));
@@ -177,27 +190,28 @@ PatientList *loadPatientsFromFile(const char *filename) {
         }
     }
 
-    if (fields_read == 8 && status != FINISHED) {
-        Patient *patient = (Patient *)malloc(sizeof(Patient));
-        if (patient) {
-            strncpy(patient->id, id, sizeof(patient->id) - 1);
-            patient->id[sizeof(patient->id) - 1] = '\0';
-            strncpy(patient->name, name, sizeof(patient->name) - 1);
-            patient->name[sizeof(patient->name) - 1] = '\0';
-            patient->year = year;
-            patient->status = (Status)status;
-            patient->caseType = (CaseType)caseType;
-            patient->arrivalTime = (time_t)(arrivalTime > 0 ? arrivalTime : time(NULL));
-            patient->examiningStartTime = (time_t)(examiningStartTime > 0 ? examiningStartTime : 0);
-            patient->examiningEndTime = (time_t)(examiningEndTime > 0 ? examiningEndTime : 0);
-            addPatient(list, patient);
-            int id_num = atoi(id + 1);
-            if (id_num >= patient_number) {
-                patient_number = id_num + 1;
+    if (fields_read == 9 && status != FINISHED) {
+        if (!(arrivalTime > 0 && (now - arrivalTime) > 1800)) {
+            Patient *patient = (Patient *)malloc(sizeof(Patient));
+            if (patient) {
+                strncpy(patient->id, id, sizeof(patient->id) - 1);
+                patient->id[sizeof(patient->id) - 1] = '\0';
+                strncpy(patient->name, name, sizeof(patient->name) - 1);
+                patient->name[sizeof(patient->name) - 1] = '\0';
+                patient->year = year;
+                patient->status = (Status)status;
+                patient->caseType = (CaseType)caseType;
+                patient->arrivalTime = (time_t)(arrivalTime > 0 ? arrivalTime : time(NULL));
+                patient->examiningStartTime = (time_t)(examiningStartTime > 0 ? examiningStartTime : 0);
+                patient->examiningEndTime = (time_t)(examiningEndTime > 0 ? examiningEndTime : 0);
+                addPatient(list, patient);
+                int id_num = atoi(id + 1);
+                if (id_num >= patient_number) {
+                    patient_number = id_num + 1;
+                }
             }
         }
     }
-
     fclose(file);
     return list;
 }
@@ -227,6 +241,7 @@ void savePatientToFile(Patient *patient, const char *filename) {
     }
 
     fprintf(file, "id: %s\n", patient->id);
+    fprintf(file, "IDCard: %s\n", patient->IDCard);
     fprintf(file, "name: %s\n", patient->name);
     fprintf(file, "year: %d\n", patient->year);
     fprintf(file, "status: %d\n", patient->status);
@@ -263,6 +278,7 @@ void updatePatientsFile(PatientList *list, const char *filename) {
         }
 
         fprintf(file, "id: %s\n", p->id);
+        fprintf(file, "IDCard: %s\n", p->IDCard);
         fprintf(file, "name: %s\n", p->name);
         fprintf(file, "year: %d\n", p->year);
         fprintf(file, "status: %d // %s\n", p->status, statusToString(p->status));

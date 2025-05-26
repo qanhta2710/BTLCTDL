@@ -13,10 +13,10 @@ void displayMenu() {
     printf("3. Finish examination for a patient\n");
     printf("4. Search patient by ID\n");
     printf("5. Search patient by name\n");
-    printf("6. Show Queue\n");
-    printf("7. List all patients\n");
-    printf("8. Search patient history by name\n");
-    printf("9. Show history\n");
+    printf("6. Show current queue\n");
+    printf("7. List all patients waiting or being examined\n");
+    printf("8. Search patient history by ID Card\n");
+    printf("9. Display medical history of all patients visited\n");
     printf("10. Exit\n");
     printf("Enter your choice: ");
 }
@@ -55,7 +55,7 @@ static const char *getStatusName(Status status) {
 
 void processUserInput(PatientList *list, PriorityQueue *pq, historyList *history) {
     int choice, caseTypeChoice;
-    char id[10], name[255];
+    char id[10], name[255], IDCard[20];
     int year, caseType;
     do {
         updatePatientsFile(list, "patients.txt");
@@ -69,13 +69,17 @@ void processUserInput(PatientList *list, PriorityQueue *pq, historyList *history
             clearScreen();
             printf("=== Add New Patient ===\n");
 
+            printf("Enter ID Card: ");
+            fgets(IDCard, sizeof(IDCard), stdin);
+            IDCard[strcspn(IDCard, "\n")] = 0;
+
             printf("Enter patient name: ");
             fgets(name, sizeof(name), stdin);
             name[strcspn(name, "\n")] = 0;
 
             printf("Enter birth year: ");
             scanf("%d", &year);
-            getchar();
+            while (getchar() != '\n');
 
             do
             {
@@ -93,7 +97,7 @@ void processUserInput(PatientList *list, PriorityQueue *pq, historyList *history
             } while (caseTypeChoice < 1 || caseTypeChoice > 4);
             caseType = (CaseType)caseTypeChoice;
 
-            Patient *myPatient = newPatient(name, year, caseType);
+            Patient *myPatient = newPatient(IDCard, name, year, caseType);
             if (myPatient != NULL) {
                 addPatient(list, myPatient);
                 enqueue(pq, myPatient);
@@ -196,10 +200,10 @@ void processUserInput(PatientList *list, PriorityQueue *pq, historyList *history
             break;
         case 8:
             clearScreen();
-            printf("Enter patient name: ");
-            fgets(name, sizeof(name), stdin);
-            name[strcspn(name, "\n")] = 0;
-            searchVisitHistoryByName(history, name);
+            printf("Enter ID Card: ");
+            fgets(IDCard, sizeof(IDCard), stdin);
+            IDCard[strcspn(IDCard, "\n")] = 0;
+            searchVisitHistoryByIDCard(history, IDCard);
             printf("Press any key to continue...\n");
             getchar();
             break;

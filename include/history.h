@@ -6,7 +6,7 @@
 
 typedef struct History {
     char visitedID[50];
-    char id[10];
+    char IDCard[20];
     char name[255];
     int year;
     time_t arrivalTime;
@@ -26,7 +26,7 @@ typedef struct historyList {
 
 historyList *createHistory();
 void addVisitHistory(historyList *list, Patient *patient);
-void searchVisitHistoryByName(historyList *list, const char *name);
+void searchVisitHistoryByIDCard(historyList *list, const char *IDCard);
 void freeList(historyList *list);
 void showHistory(historyList *list);
 void saveHistoryToFile(History *history, const char *filename);

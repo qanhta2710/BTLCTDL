@@ -6,6 +6,7 @@
 
 int main() {
     PatientList *myList = loadPatientsFromFile("patients.txt");
+    updatePatientsFile(myList, "patients.txt");
     PriorityQueue myQueue;
     initQueue(&myQueue);
     historyList *history = loadHistoryFromFile("history.txt");
