@@ -104,6 +104,10 @@ Patient* dequeue(PriorityQueue* pq) {
 
 void showQueue(PriorityQueue* pq) {
     printf("%d Patients Waiting:\n", pq->size);
+    printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
+    printf("| ID         | Name                 | Birth Year | Status     | Arrival Time        | Case Type      | Examining Time      | Finished Time       |\n");
+    printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
+
     PriorityQueue tempQueue = *pq;
     while (!isEmpty(&tempQueue)) {
         Patient *p = dequeue(&tempQueue);
@@ -112,9 +116,6 @@ void showQueue(PriorityQueue* pq) {
         strftime(startBuffer, sizeof(startBuffer), "%d-%m-%Y %H:%M:%S", localtime(&p->examiningStartTime));
         strftime(endBuffer, sizeof(endBuffer), "%d-%m-%Y %H:%M:%S", localtime(&p->examiningEndTime));
 
-        printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
-        printf("| ID         | Name                 | Birth Year | Status     | Arrival Time        | Case Type      | Examining Time      | Finished Time       |\n");
-        printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
         printf("| %-10s | %-20s | %-10d | %-10s | %-19s | %-14s | %-19s | %-19s |\n",
             p->id,
             p->name,

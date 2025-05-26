@@ -10,6 +10,7 @@ historyList *createHistory() {
         return NULL;
     }
     list->head = NULL;
+    list->tail = NULL;
     return list;
 }
 
@@ -24,6 +25,9 @@ void addVisitHistory(historyList *list, Patient *patient) {
         return;
     }
     
+    memset(&newVisit->data, 0, sizeof(History));
+    newVisit->next = NULL;
+
     char timeStr[30];
     strftime(timeStr, sizeof(timeStr), "%Y%m%d%H%M%S", localtime(&patient->arrivalTime));
     sprintf(newVisit->data.visitedID, "%s_%s", patient->id, timeStr);
@@ -46,7 +50,7 @@ void addVisitHistory(historyList *list, Patient *patient) {
 }
 
 void showHistory(historyList *list) {
-    if (list == NULL) {
+    if (list == NULL || list->head == NULL) {
         printf("List is empty\n");
         return;
     }
@@ -69,6 +73,7 @@ void showHistory(historyList *list) {
             startBuffer,
             endBuffer);
         current = current->next;
+        printf("+------------------------+----------------------+------------+---------------------+---------------------+---------------------+\n");
     }
 }
 
@@ -87,14 +92,14 @@ void searchVisitHistoryByIDCard(historyList *list, const char *IDCard) {
         strftime(startBuffer, sizeof(startBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->data.examiningStartTime));
         strftime(endBuffer, sizeof(endBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->data.examiningEndTime));
 
-        printf("| %-22s | %-12s | %-20s | %-10d | %-19s | %-19s | %-19s |\n",
-            current->data.visitedID,
-            current->data.IDCard,
-            current->data.name,
-            current->data.year,
-            arrivalBuffer,
-            startBuffer,
-            endBuffer);
+            printf("| %-22s | %-20s | %-10d | %-19s | %-19s | %-19s |\n",
+                current->data.visitedID,
+                current->data.name,
+                current->data.year,
+                arrivalBuffer,
+                startBuffer,
+                endBuffer);
+        }
         current = current->next;
     }
 }
@@ -109,6 +114,8 @@ void freeList(historyList *list) {
         current = current->next;
         free(tmp);
     }
+    list->head = NULL;
+    list->tail = NULL;
     free(list);
 }
 
