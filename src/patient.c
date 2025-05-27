@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "patient.h"
-#include "history.h"
 
 static const char* statusToString(Status status) {
     switch (status) {

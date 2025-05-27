@@ -4,7 +4,6 @@
 #include "UI.h"
 #include "searchReport.h"
 #include "examination.h"
-#include "history.h"
 
 void displayMenu() {
     printf("\n=== Hospital Management System ===\n");
