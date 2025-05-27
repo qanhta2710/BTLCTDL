@@ -12,13 +12,12 @@ void displayMenu() {
     printf("2. Call next patient for examination\n");
     printf("3. Finish examination for a patient\n");
     printf("4. Search patient by ID\n");
-    printf("5. Search patient by name\n");
+    printf("5. Search patient by ID Card\n");
     printf("6. Show current queue\n");
     printf("7. List all patients waiting or being examined\n");
     printf("8. Search patient history by ID Card\n");
-    printf("9. Display medical history of all patients visited\n");
-    printf("10. Delete patient by ID\n");
-    printf("11. Exit\n");
+    printf("9. Delete patient by ID\n");
+    printf("10. Exit\n");
     printf("Enter your choice: ");
 }
 
@@ -178,12 +177,12 @@ void processUserInput(PatientList *list, PriorityQueue *pq, historyList *history
             break;
         case 5:
             clearScreen();
-            printf("=== Search Patient by Name ===\n");
-            printf("Enter patient name: ");
-            fgets(name, sizeof(name), stdin);
-            name[strcspn(name, "\n")] = 0;
+            printf("=== Search Patient by ID Card ===\n");
+            printf("Enter patient ID Card: ");
+            fgets(IDCard, sizeof(IDCard), stdin);
+            IDCard[strcspn(IDCard, "\n")] = 0;
 
-            searchByName(list, name);
+            searchByIDCard(list, IDCard);
             printf("Press any key to continue...\n");
             getchar();
             break;
@@ -210,12 +209,6 @@ void processUserInput(PatientList *list, PriorityQueue *pq, historyList *history
             break;
         case 9:
             clearScreen();
-            showHistory(history);
-            printf("Press any key to continue...\n");
-            getchar();
-            break;
-        case 10:
-            clearScreen();
             printf("Enter patient ID: ");
             fgets(id, sizeof(id), stdin);
             id[strcspn(id, "\n")] = 0;
@@ -224,12 +217,12 @@ void processUserInput(PatientList *list, PriorityQueue *pq, historyList *history
             printf("Press any key to continue...\n");
             getchar();
             break;
-        case 11:
+        case 10:
             clearScreen();
             printf("Exiting...\n");
             break;
         default:
             printf("Invalid Option");
         }
-    } while (choice != 11);
+    } while (choice != 10);
 }

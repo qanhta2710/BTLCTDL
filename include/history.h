@@ -28,7 +28,6 @@ historyList *createHistory();
 void addVisitHistory(historyList *list, Patient *patient);
 void searchVisitHistoryByIDCard(historyList *list, const char *IDCard);
 void freeList(historyList *list);
-void showHistory(historyList *list);
 void saveHistoryToFile(History *history, const char *filename);
 historyList *loadHistoryFromFile(const char *filename);
 

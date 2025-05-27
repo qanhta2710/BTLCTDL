@@ -49,34 +49,6 @@ void addVisitHistory(historyList *list, Patient *patient) {
     printf("Added patient to history successfully\n");
 }
 
-void showHistory(historyList *list) {
-    if (list == NULL || list->head == NULL) {
-        printf("List is empty\n");
-        return;
-    }
-    historyNode *current = list->head;
-    printf("+------------------------+--------------+----------------------+------------+---------------------+---------------------+---------------------+\n");
-    printf("| Visited ID             | IDCard       | Name                 | Birth Year | Arrival Time        | Examining Time      | Finished Time       |\n");
-    printf("+------------------------+--------------+----------------------+------------+---------------------+---------------------+---------------------+\n");
-    while (current != NULL) {
-        char arrivalBuffer[100], startBuffer[100], endBuffer[100];
-        strftime(arrivalBuffer, sizeof(arrivalBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->data.arrivalTime));
-        strftime(startBuffer, sizeof(startBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->data.examiningStartTime));
-        strftime(endBuffer, sizeof(endBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->data.examiningEndTime));
-
-        printf("| %-22s | %-12s | %-20s | %-10d | %-19s | %-19s | %-19s |\n",
-            current->data.visitedID,
-            current->data.IDCard,
-            current->data.name,
-            current->data.year,
-            arrivalBuffer,
-            startBuffer,
-            endBuffer);
-        current = current->next;
-        printf("+------------------------+--------------+----------------------+------------+---------------------+---------------------+---------------------+\n");
-    }
-}
-
 void searchVisitHistoryByIDCard(historyList *list, const char *IDCard) {
     if (list == NULL) {
         printf("Memory allocation failed\n");
@@ -86,19 +58,21 @@ void searchVisitHistoryByIDCard(historyList *list, const char *IDCard) {
     printf("+------------------------+--------------+----------------------+------------+---------------------+---------------------+---------------------+\n");
     printf("| Visited ID             | IDCard       | Name                 | Birth Year | Arrival Time        | Examining Time      | Finished Time       |\n");
     printf("+------------------------+--------------+----------------------+------------+---------------------+---------------------+---------------------+\n");
-    while (strcmp(current->data.IDCard, IDCard) == 0) {
-        char arrivalBuffer[100], startBuffer[100], endBuffer[100];
-        strftime(arrivalBuffer, sizeof(arrivalBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->data.arrivalTime));
-        strftime(startBuffer, sizeof(startBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->data.examiningStartTime));
-        strftime(endBuffer, sizeof(endBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->data.examiningEndTime));
-        printf("| %-22s | %-12s | %-20s | %-10d | %-19s | %-19s | %-19s |\n",
-            current->data.visitedID,
-            current->data.IDCard,
-            current->data.name,
-            current->data.year,
-            arrivalBuffer,
-            startBuffer,
-            endBuffer);
+    while (current != NULL) {
+        if (strcmp(current->data.IDCard, IDCard) == 0) {
+            char arrivalBuffer[100], startBuffer[100], endBuffer[100];
+            strftime(arrivalBuffer, sizeof(arrivalBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->data.arrivalTime));
+            strftime(startBuffer, sizeof(startBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->data.examiningStartTime));
+            strftime(endBuffer, sizeof(endBuffer), "%d-%m-%Y %H:%M:%S", localtime(&current->data.examiningEndTime));
+            printf("| %-22s | %-12s | %-20s | %-10d | %-19s | %-19s | %-19s |\n",
+                current->data.visitedID,
+                current->data.IDCard,
+                current->data.name,
+                current->data.year,
+                arrivalBuffer,
+                startBuffer,
+                endBuffer);
+        }
         current = current->next;
     }
 }

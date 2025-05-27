@@ -3,7 +3,7 @@
 
 #include "patient.h"
 
-void searchByName(PatientList* list, char* name);
+void searchByIDCard(PatientList* list, char* IDCard);
 Patient* searchByID(PatientList* list, char* id);
 void showAllPatients(PatientList* list);
 

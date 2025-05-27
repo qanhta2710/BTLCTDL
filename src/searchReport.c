@@ -23,8 +23,8 @@ const char* statusToString(Status status) {
     }
 }
 
-void searchByName(PatientList* list, char* name) {
-    if (list == NULL || list->head == NULL || name == NULL) {
+void searchByIDCard(PatientList* list, char* IDCard) {
+    if (list == NULL || list->head == NULL || IDCard == NULL) {
         printf("Invalid input.\n");
         return;
     }
@@ -33,7 +33,7 @@ void searchByName(PatientList* list, char* name) {
     PatientNode* current = list->head;
     
     while (current != NULL) {
-        if (strcmp(current->patient->name, name) == 0) {
+        if (strcmp(current->patient->IDCard, IDCard) == 0) {
             if (!found) {
                 printf("+------------+----------------------+------------+------------+---------------------+----------------+---------------------+---------------------+\n");
                 printf("| ID         | Name                 | Birth Year | Status     | Arrival Time        | Case Type      | Examining Time      | Finished Time       |\n");
@@ -64,7 +64,7 @@ void searchByName(PatientList* list, char* name) {
     }
 
     if (!found) {
-        printf("No patient found with name \"%s\".\n", name);
+        printf("No patient found with ID Card \"%s\".\n", IDCard);
     }
 }
 
