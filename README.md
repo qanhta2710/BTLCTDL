@@ -15,3 +15,5 @@ mkdir build
 cd build
 cmake -G "MinGW Makefiles" ..
 mingw32-make
+```
+File thực thi program.exe nằm trong folder build
