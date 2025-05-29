@@ -16,4 +16,4 @@ cd build
 cmake -G "MinGW Makefiles" ..
 mingw32-make
 ```
-File thực thi program.exe nằm trong folder build
+Sau khi build thành công, chương trình program.exe nằm trong thư mục `build`
